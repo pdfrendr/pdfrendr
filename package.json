@@ -1,0 +1,88 @@
+{
+  "name": "pdfrendr",
+  "version": "1.0.0",
+  "type": "module",
+  "description": "PDF processing library that attempts to reduce dynamic objects while preserving document structure",
+  "main": "dist/node/index.js",
+  "module": "dist/browser/index.esm.js",
+  "browser": "dist/browser/index.esm.js",
+  "types": "dist/index.d.ts",
+  "exports": {
+    ".": {
+      "node": {
+        "import": "./dist/node/index.esm.js",
+        "require": "./dist/node/index.js"
+      },
+      "browser": {
+        "import": "./dist/browser/index.esm.js",
+        "require": "./dist/browser/index.js"
+      },
+      "default": "./dist/browser/index.esm.js"
+    }
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "rollup -c",
+    "build:browser": "rollup -c --environment TARGET:browser",
+    "build:node": "rollup -c --environment TARGET:node",
+    "build:demo": "vite build --config vite.demo.config.ts",
+    "dev": "rollup -c -w",
+    "test": "vitest",
+    "test:node": "vitest run test/node",
+    "test:browser": "vitest run test/browser",
+    "lint": "eslint src/**/*.ts",
+    "example:server": "node examples/server.js",
+    "example:cli": "node examples/node-cli.cjs",
+    "build:github": "vite build --config vite.config.github.ts",
+    "build:react": "cd frontend && npm run build",
+    "build:library": "npx vite build --config vite.library.config.ts",
+    "build:pages": "npm run build:library && npm run build:react && npm run copy:assets",
+    "copy:assets": "cp frontend/public/pdfrendr.umd.cjs dist-github/ && cp assets/logo.png dist-github/ && cp frontend/public/pdf.worker.min.js dist-github/ && cp frontend/public/CNAME dist-github/",
+    "preview:github": "vite preview --config vite.config.github.ts"
+  },
+  "keywords": [
+    "pdf",
+    "security",
+    "sanitization",
+    "malware-removal",
+    "universal",
+    "browser",
+    "nodejs",
+    "typescript",
+    "client-side",
+    "server-side"
+  ],
+  "author": "PDFRendr",
+  "license": "MIT",
+  "homepage": "https://pdfrendr.github.io",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/pdfrendr/pdfrendr.git"
+  },
+  "bugs": {
+    "url": "https://github.com/pdfrendr/pdfrendr/issues"
+  },
+  "dependencies": {
+    "pdf-lib": "^1.17.1",
+    "pdfjs-dist": "^4.0.379"
+  },
+  "optionalDependencies": {
+    "canvas": "^2.11.2"
+  },
+  "devDependencies": {
+    "@rollup/plugin-commonjs": "^25.0.7",
+    "@rollup/plugin-node-resolve": "^15.2.3",
+    "@rollup/plugin-typescript": "^11.1.5",
+    "@types/node": "^20.10.0",
+    "@typescript-eslint/eslint-plugin": "^6.13.0",
+    "@typescript-eslint/parser": "^6.13.0",
+    "eslint": "^8.54.0",
+    "jsdom": "^25.0.0",
+    "rollup": "^4.6.0",
+    "typescript": "^5.3.0",
+    "vite": "^5.0.0",
+    "vitest": "^1.0.0"
+  }
+}
