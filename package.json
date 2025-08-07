@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "type": "module",
   "description": "PDF processing library that attempts to reduce dynamic objects while preserving document structure",
+  "license": "MIT",
   "main": "dist/node/index.js",
   "module": "dist/browser/index.esm.js",
   "browser": "dist/browser/index.esm.js",

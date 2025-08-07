@@ -1,5 +1,7 @@
 # PDFRendr
 
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+
 **Convert PDFs to images and rebuild them as clean PDFs**
 
 ![PDFRendr Logo](assets/logo.png)
