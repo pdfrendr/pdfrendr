@@ -12,9 +12,12 @@ interface DetectionResult {
 
 const DETECTION_PATTERNS = {
   'JavaScript actions (/JavaScript)': (content: string, buffer: ArrayBuffer): DetectionResult => {
-    const jsActionIndex = content.indexOf('/JavaScript');
+    // Look for /JavaScript as a proper PDF dictionary key
+    const jsRegex = /\/JavaScript[\s>]/g;
+    const match = jsRegex.exec(content);
     
-    if (jsActionIndex !== -1) {
+    if (match) {
+      const jsActionIndex = match.index;
       return {
         found: true,
         hexSnippet: generateHexSnippet(buffer, jsActionIndex, '/JavaScript'.length, '/JavaScript'),
@@ -27,9 +30,13 @@ const DETECTION_PATTERNS = {
   },
 
   'JavaScript objects (/JS)': (content: string, buffer: ArrayBuffer): DetectionResult => {
-    const jsIndex = content.indexOf('/JS');
+    // Look for /JS as a proper PDF dictionary key, not just any occurrence
+    // Use regex to find /JS followed by space, > or newline (proper PDF syntax)
+    const jsRegex = /\/JS[\s>]/g;
+    const match = jsRegex.exec(content);
     
-    if (jsIndex !== -1) {
+    if (match) {
+      const jsIndex = match.index;
       return {
         found: true,
         hexSnippet: generateHexSnippet(buffer, jsIndex, '/JS'.length, '/JS'),
@@ -57,9 +64,12 @@ const DETECTION_PATTERNS = {
   },
 
   'External links (/URI)': (content: string, buffer: ArrayBuffer): DetectionResult => {
-    const uriIndex = content.indexOf('/URI');
+    // Look for /URI as a proper PDF dictionary key
+    const uriRegex = /\/URI[\s>]/g;
+    const match = uriRegex.exec(content);
     
-    if (uriIndex !== -1) {
+    if (match) {
+      const uriIndex = match.index;
       return {
         found: true,
         hexSnippet: generateHexSnippet(buffer, uriIndex, '/URI'.length, '/URI'),

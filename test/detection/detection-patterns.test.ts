@@ -72,6 +72,26 @@ startxref
       expect(jsActions).toHaveLength(1);
       expect(jsObjects).toHaveLength(1);
     });
+
+    it('should NOT detect false positive /JS in binary content', () => {
+      // Test content that contains /JS but not as a PDF dictionary key
+      const pdf = createTestPDF('/JSCodec binary data /JPEG more data');
+      const detected = getDetectedObjectsWithHex(pdf);
+      
+      // Should not detect /JS because it's not followed by space or >
+      const jsDetections = detected.filter(obj => obj.name === 'JavaScript objects (/JS)');
+      expect(jsDetections).toHaveLength(0);
+    });
+
+    it('should NOT detect false positive /JavaScript in text content', () => {
+      // Test content that contains /JavaScript but not as a proper PDF key
+      const pdf = createTestPDF('/JavaScriptFile some content');
+      const detected = getDetectedObjectsWithHex(pdf);
+      
+      // Should not detect /JavaScript because it's not followed by space or >
+      const jsDetections = detected.filter(obj => obj.name === 'JavaScript actions (/JavaScript)');
+      expect(jsDetections).toHaveLength(0);
+    });
   });
 
   describe('Navigation & Actions', () => {
