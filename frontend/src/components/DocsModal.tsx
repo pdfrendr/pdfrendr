@@ -43,86 +43,93 @@ const DocsModal: React.FC<DocsModalProps> = ({ isOpen, filename, onClose }) => {
   };
 
   const parseMarkdown = async (markdown: string): Promise<string> => {
-    // Configure marked with custom renderer for Tailwind CSS classes
-    const renderer = new marked.Renderer();
-    
-    // Customize heading styles
-    renderer.heading = (text, level) => {
-      const classes = {
-        1: 'text-2xl font-bold text-gray-900 mt-8 mb-6 border-b border-gray-200 pb-2',
-        2: 'text-xl font-semibold text-gray-900 mt-8 mb-4',
-        3: 'text-lg font-semibold text-gray-900 mt-6 mb-3',
-        4: 'text-base font-semibold text-gray-900 mt-4 mb-2',
-        5: 'text-sm font-semibold text-gray-900 mt-3 mb-2',
-        6: 'text-xs font-semibold text-gray-900 mt-2 mb-1'
+    try {
+      // Configure marked with custom renderer for Tailwind CSS classes
+      const renderer = new marked.Renderer();
+      
+      // Customize heading styles
+      renderer.heading = (text, level) => {
+        const classes = {
+          1: 'text-2xl font-bold text-gray-900 mt-8 mb-6 border-b border-gray-200 pb-2',
+          2: 'text-xl font-semibold text-gray-900 mt-8 mb-4',
+          3: 'text-lg font-semibold text-gray-900 mt-6 mb-3',
+          4: 'text-base font-semibold text-gray-900 mt-4 mb-2',
+          5: 'text-sm font-semibold text-gray-900 mt-3 mb-2',
+          6: 'text-xs font-semibold text-gray-900 mt-2 mb-1'
+        };
+        return `<h${level} class="${classes[level] || classes[3]}">${text}</h${level}>`;
       };
-      return `<h${level} class="${classes[level] || classes[3]}">${text}</h${level}>`;
-    };
-    
-    // Customize paragraph styles
-    renderer.paragraph = (text) => {
-      return `<p class="mb-4 text-gray-700 leading-relaxed">${text}</p>`;
-    };
-    
-    // Customize code block styles
-    renderer.code = (code, language) => {
-      return `<pre class="bg-gray-100 border border-gray-200 rounded-lg p-4 overflow-x-auto my-4"><code class="text-sm font-mono text-gray-800">${code}</code></pre>`;
-    };
-    
-    // Customize inline code styles
-    renderer.codespan = (code) => {
-      return `<code class="bg-gray-100 px-2 py-1 rounded text-sm font-mono text-gray-800">${code}</code>`;
-    };
-    
-    // Customize link styles
-    renderer.link = (href, title, text) => {
-      const titleAttr = title ? ` title="${title}"` : '';
-      return `<a href="${href}"${titleAttr} target="_blank" rel="noopener noreferrer" class="text-blue-600 hover:text-blue-700 underline">${text}</a>`;
-    };
-    
-    // Customize list styles
-    renderer.list = (body, ordered) => {
-      const tag = ordered ? 'ol' : 'ul';
-      const classes = ordered ? 'list-decimal list-inside mb-4 ml-4 space-y-1' : 'list-disc list-inside mb-4 ml-4 space-y-1';
-      return `<${tag} class="${classes}">${body}</${tag}>`;
-    };
-    
-    renderer.listitem = (text) => {
-      return `<li class="text-gray-700">${text}</li>`;
-    };
-    
-    // Customize table styles
-    renderer.table = (header, body) => {
-      return `<div class="overflow-x-auto my-4"><table class="min-w-full border border-gray-200 rounded-lg">${header}${body}</table></div>`;
-    };
-    
-    renderer.tablerow = (content) => {
-      return `<tr class="border-b border-gray-100">${content}</tr>`;
-    };
-    
-    renderer.tablecell = (content, flags) => {
-      const tag = flags.header ? 'th' : 'td';
-      const classes = flags.header 
-        ? 'px-4 py-2 bg-gray-50 font-semibold text-left text-gray-900 border-b border-gray-200' 
-        : 'px-4 py-2 text-gray-700';
-      return `<${tag} class="${classes}">${content}</${tag}>`;
-    };
-    
-    // Customize blockquote styles
-    renderer.blockquote = (quote) => {
-      return `<blockquote class="border-l-4 border-blue-500 pl-4 my-4 text-gray-600 italic">${quote}</blockquote>`;
-    };
-    
-    // Configure marked options
-    marked.setOptions({
-      renderer,
-      gfm: true, // GitHub Flavored Markdown
-      breaks: true, // Line breaks
-      sanitize: false, // Allow HTML (we trust our own markdown)
-      smartypants: true // Smart quotes
-    });
-    
-    return marked.parse(markdown);
+      
+      // Customize paragraph styles
+      renderer.paragraph = (text) => {
+        return `<p class="mb-4 text-gray-700 leading-relaxed">${text}</p>`;
+      };
+      
+      // Customize code block styles
+      renderer.code = (code, language) => {
+        return `<pre class="bg-gray-100 border border-gray-200 rounded-lg p-4 overflow-x-auto my-4"><code class="text-sm font-mono text-gray-800">${code}</code></pre>`;
+      };
+      
+      // Customize inline code styles
+      renderer.codespan = (code) => {
+        return `<code class="bg-gray-100 px-2 py-1 rounded text-sm font-mono text-gray-800">${code}</code>`;
+      };
+      
+      // Customize link styles
+      renderer.link = (href, title, text) => {
+        const titleAttr = title ? ` title="${title}"` : '';
+        return `<a href="${href}"${titleAttr} target="_blank" rel="noopener noreferrer" class="text-blue-600 hover:text-blue-700 underline">${text}</a>`;
+      };
+      
+      // Customize list styles
+      renderer.list = (body, ordered) => {
+        const tag = ordered ? 'ol' : 'ul';
+        const classes = ordered ? 'list-decimal list-inside mb-4 ml-4 space-y-1' : 'list-disc list-inside mb-4 ml-4 space-y-1';
+        return `<${tag} class="${classes}">${body}</${tag}>`;
+      };
+      
+      renderer.listitem = (text) => {
+        return `<li class="text-gray-700">${text}</li>`;
+      };
+      
+      // Customize table styles
+      renderer.table = (header, body) => {
+        return `<div class="overflow-x-auto my-4"><table class="min-w-full border border-gray-200 rounded-lg">${header}${body}</table></div>`;
+      };
+      
+      renderer.tablerow = (content) => {
+        return `<tr class="border-b border-gray-100">${content}</tr>`;
+      };
+      
+      renderer.tablecell = (content, flags) => {
+        const tag = flags.header ? 'th' : 'td';
+        const classes = flags.header 
+          ? 'px-4 py-2 bg-gray-50 font-semibold text-left text-gray-900 border-b border-gray-200' 
+          : 'px-4 py-2 text-gray-700';
+        return `<${tag} class="${classes}">${content}</${tag}>`;
+      };
+      
+      // Customize blockquote styles
+      renderer.blockquote = (quote) => {
+        return `<blockquote class="border-l-4 border-blue-500 pl-4 my-4 text-gray-600 italic">${quote}</blockquote>`;
+      };
+      
+      // Configure marked options
+      marked.setOptions({
+        renderer,
+        gfm: true, // GitHub Flavored Markdown
+        breaks: true, // Line breaks
+        sanitize: false, // Allow HTML (we trust our own markdown)
+        smartypants: true // Smart quotes
+      });
+      
+      // Handle both sync and async versions of marked.parse
+      const result = marked.parse(markdown);
+      return typeof result === 'string' ? result : await result;
+    } catch (error) {
+      console.error('Markdown parsing error:', error);
+      return `<div class="text-red-600">Error parsing markdown content</div>`;
+    }
   };
 
   if (!isOpen) return null;
