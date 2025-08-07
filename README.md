@@ -72,18 +72,25 @@ if (result.processedPdf) {
 
 | Option | Type | Default | Description |
 |--------|------|---------|-------------|
-| `renderQuality` | number | 2.0 | Rendering quality (1.0-4.0) |
-| `compressionLevel` | number | 2 | PDF compression level (0-3) |
+| `renderQuality` | number | 2.0 | Rendering quality multiplier (1.0-4.0) |
+| `compressionLevel` | number | 2 | PDF compression level (0-3, higher = more compression) |
+| `timeoutMs` | number | 30000 | Processing timeout in milliseconds |
 
 ### Result Object
 
 ```javascript
 {
-  processedPdf: ArrayBuffer,     // The processed PDF data
-  removedObjects: string[],      // List of detected dynamic objects
-  originalSize: number,          // Original file size in bytes  
-  processedSize: number,         // Processed file size in bytes
-  processingTimeMs: number       // Processing time in milliseconds
+  processedPdf: ArrayBuffer,           // The processed PDF data
+  removedObjects: DetectionResult[],   // Array of detected dynamic objects with details
+  originalSize: number,                // Original file size in bytes  
+  processedSize: number,               // Processed file size in bytes
+  processingTimeMs: number             // Processing time in milliseconds
+}
+
+// DetectionResult structure:
+{
+  name: string,        // Human-readable object type (e.g., "JavaScript actions (/JavaScript)")
+  hexSnippet: string   // Hex dump with context around the detected pattern
 }
 ```
 
