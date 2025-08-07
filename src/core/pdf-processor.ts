@@ -6,6 +6,8 @@
 
 import { PDFDocument } from 'pdf-lib';
 import { getDetectedObjectsWithHex, type DetectionResultWithHex } from '../detection/pdf-objects';
+import { analyzePDFStatistics, analyzePDFStructure, generatePDFFingerprint, type PDFStatistics, type PDFStructureInfo } from '../analysis/pdf-statistics';
+import { analyzeObfuscation } from '../analysis/obfuscation-detector';
 
 export interface ProcessingOptions {
   // Rendering quality (1.0 to 4.0)
@@ -24,6 +26,16 @@ export interface ProcessingResult {
   originalSize: number;
   processedSize: number;
   processingTimeMs: number;
+  
+  // Stevens-style analysis
+  statistics: PDFStatistics;
+  structure: PDFStructureInfo;
+  fingerprint: string;
+  obfuscationAnalysis: {
+    hasObfuscation: boolean;
+    level: 'none' | 'light' | 'moderate' | 'heavy';
+    details: string[];
+  };
 }
 
 export interface PageContent {
@@ -85,6 +97,13 @@ export class PDFProcessor {
     
     const processingTimeMs = Date.now() - startTime;
     
+    // Perform Stevens-style analysis
+    const content = new TextDecoder('latin1').decode(originalPdf);
+    const statistics = analyzePDFStatistics(content);
+    const structure = analyzePDFStructure(originalPdf);
+    const fingerprint = generatePDFFingerprint(statistics, structure);
+    const obfuscation = analyzeObfuscation(content);
+    
     return {
       processedPdf: processedPdfBytes.buffer.slice(
         processedPdfBytes.byteOffset,
@@ -93,7 +112,15 @@ export class PDFProcessor {
       removedObjects,
       originalSize: originalPdf.byteLength,
       processedSize: processedPdfBytes.length,
-      processingTimeMs
+      processingTimeMs,
+      statistics,
+      structure,
+      fingerprint,
+      obfuscationAnalysis: {
+        hasObfuscation: obfuscation.hasObfuscation,
+        level: obfuscation.obfuscationLevel,
+        details: obfuscation.analysis
+      }
     };
   }
 

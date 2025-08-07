@@ -1,5 +1,5 @@
 import React from 'react';
-import { Download, RotateCcw, FileCheck, Database, Clock, Package2, Hash, Eye } from 'lucide-react';
+import { Download, RotateCcw, FileCheck, Database, Clock, Package2, Hash, Eye, AlertTriangle, Info, Shield, Zap } from 'lucide-react';
 import { ProcessingResult } from '../App';
 import HexViewer from './HexViewer';
 
@@ -176,6 +176,143 @@ const Results: React.FC<ResultsProps> = ({ result, fileName, onReset }) => {
         <div className="mb-6 bg-gray-50 rounded border border-gray-200 p-4 text-center">
           <div className="text-sm text-gray-600 font-mono">
             CLEAN[0] No dynamic objects detected
+          </div>
+        </div>
+      )}
+
+      {/* Stevens-style PDF Analysis */}
+      {result.statistics && (
+        <div className="mb-6 bg-white rounded border border-gray-200">
+          <div className="px-4 py-3 border-b border-gray-200 bg-gray-50">
+            <h3 className="text-sm font-semibold text-gray-900 flex items-center gap-2">
+              <Shield size={16} />
+              PDF Structure Analysis
+              <span className="text-xs bg-blue-100 text-blue-800 px-2 py-1 rounded font-mono">
+                Didier Stevens Method
+              </span>
+            </h3>
+          </div>
+          <div className="p-4 space-y-4">
+            {/* Risk Assessment */}
+            <div className="flex items-start gap-3">
+              <div className={`p-2 rounded-full ${
+                result.statistics.riskLevel === 'critical' ? 'bg-red-100 text-red-600' :
+                result.statistics.riskLevel === 'high' ? 'bg-orange-100 text-orange-600' :
+                result.statistics.riskLevel === 'medium' ? 'bg-yellow-100 text-yellow-600' :
+                'bg-green-100 text-green-600'
+              }`}>
+                {result.statistics.riskLevel === 'critical' || result.statistics.riskLevel === 'high' ? 
+                  <AlertTriangle size={16} /> : 
+                  result.statistics.riskLevel === 'medium' ? <Info size={16} /> : <Shield size={16} />
+                }
+              </div>
+              <div className="flex-1">
+                <div className="flex items-center gap-2">
+                  <span className="font-semibold text-gray-900">
+                    Risk Level: {result.statistics.riskLevel.toUpperCase()}
+                  </span>
+                  <span className="text-sm text-gray-500 font-mono">
+                    Score: {result.statistics.suspiciousScore}/100
+                  </span>
+                </div>
+                <div className="mt-1 space-y-1">
+                  {result.statistics.analysis.map((analysis, idx) => (
+                    <div key={idx} className="text-sm text-gray-600">{analysis}</div>
+                  ))}
+                </div>
+              </div>
+            </div>
+
+            {/* PDF Statistics Grid */}
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-3 text-xs">
+              <div className="bg-gray-50 p-2 rounded">
+                <div className="text-gray-500 font-mono">Objects</div>
+                <div className="font-mono text-gray-900">{result.statistics.obj}</div>
+              </div>
+              <div className="bg-gray-50 p-2 rounded">
+                <div className="text-gray-500 font-mono">Streams</div>
+                <div className="font-mono text-gray-900">{result.statistics.stream}</div>
+              </div>
+              <div className="bg-gray-50 p-2 rounded">
+                <div className="text-gray-500 font-mono">Pages</div>
+                <div className="font-mono text-gray-900">{result.statistics.pages}</div>
+              </div>
+              <div className="bg-gray-50 p-2 rounded">
+                <div className="text-gray-500 font-mono">JavaScript</div>
+                <div className={`font-mono ${result.statistics.javascript + result.statistics.js > 0 ? 'text-red-600' : 'text-gray-900'}`}>
+                  {result.statistics.javascript + result.statistics.js}
+                </div>
+              </div>
+              <div className="bg-gray-50 p-2 rounded">
+                <div className="text-gray-500 font-mono">Auto Actions</div>
+                <div className={`font-mono ${result.statistics.aa + result.statistics.openAction > 0 ? 'text-red-600' : 'text-gray-900'}`}>
+                  {result.statistics.aa + result.statistics.openAction}
+                </div>
+              </div>
+            </div>
+
+            {/* Document Structure */}
+            {result.structure && (
+              <div className="border-t border-gray-200 pt-3">
+                <div className="text-sm font-medium text-gray-700 mb-2">Document Structure</div>
+                <div className="grid grid-cols-2 md:grid-cols-3 gap-2 text-xs">
+                  <div className="flex justify-between">
+                    <span className="text-gray-500">Version:</span>
+                    <span className="font-mono">{result.structure.version}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-gray-500">Linearized:</span>
+                    <span className="font-mono">{result.structure.isLinearized ? 'Yes' : 'No'}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-gray-500">Updates:</span>
+                    <span className="font-mono">{result.structure.hasIncrementalUpdates ? 'Yes' : 'No'}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-gray-500">Objects:</span>
+                    <span className="font-mono">{result.structure.totalObjects}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-gray-500">Corrupted:</span>
+                    <span className={`font-mono ${result.structure.corruptedStructure ? 'text-red-600' : 'text-green-600'}`}>
+                      {result.structure.corruptedStructure ? 'Yes' : 'No'}
+                    </span>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* Obfuscation Analysis */}
+            {result.obfuscationAnalysis && result.obfuscationAnalysis.hasObfuscation && (
+              <div className="border-t border-gray-200 pt-3">
+                <div className="flex items-center gap-2 mb-2">
+                  <Zap size={14} className="text-orange-500" />
+                  <span className="text-sm font-medium text-gray-700">Obfuscation Detected</span>
+                  <span className={`text-xs px-2 py-1 rounded font-mono ${
+                    result.obfuscationAnalysis.level === 'heavy' ? 'bg-red-100 text-red-800' :
+                    result.obfuscationAnalysis.level === 'moderate' ? 'bg-orange-100 text-orange-800' :
+                    'bg-yellow-100 text-yellow-800'
+                  }`}>
+                    {result.obfuscationAnalysis.level.toUpperCase()}
+                  </span>
+                </div>
+                <div className="space-y-1">
+                  {result.obfuscationAnalysis.details.map((detail, idx) => (
+                    <div key={idx} className="text-xs text-gray-600">{detail}</div>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* PDF Fingerprint */}
+            {result.fingerprint && (
+              <div className="border-t border-gray-200 pt-3">
+                <div className="text-sm font-medium text-gray-700 mb-1">Document Fingerprint</div>
+                <div className="text-xs font-mono text-gray-600 bg-gray-50 p-2 rounded">
+                  {result.fingerprint}
+                </div>
+              </div>
+            )}
           </div>
         </div>
       )}

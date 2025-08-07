@@ -19,6 +19,31 @@ export interface ProcessingResult {
   originalSize: number;
   processedSize: number;
   processingTimeMs: number;
+  statistics?: {
+    obj: number;
+    stream: number;
+    pages: number;
+    javascript: number;
+    js: number;
+    aa: number;
+    openAction: number;
+    suspiciousScore: number;
+    riskLevel: 'low' | 'medium' | 'high' | 'critical';
+    analysis: string[];
+  };
+  structure?: {
+    version: string;
+    isLinearized: boolean;
+    hasIncrementalUpdates: boolean;
+    corruptedStructure: boolean;
+    totalObjects: number;
+  };
+  fingerprint?: string;
+  obfuscationAnalysis?: {
+    hasObfuscation: boolean;
+    level: 'none' | 'light' | 'moderate' | 'heavy';
+    details: string[];
+  };
 }
 
 export interface ProcessingOptions {
