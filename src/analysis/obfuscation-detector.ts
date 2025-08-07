@@ -1,6 +1,13 @@
 /**
  * PDF Name Obfuscation Detection
  * Based on Didier Stevens' research on PDF obfuscation techniques
+ * 
+ * Reference: Didier Stevens' PDF analysis research
+ * - Hex-encoded name detection (e.g., /J#61vaScript → /JavaScript)
+ * - Name obfuscation patterns in malicious PDFs
+ * - Confidence scoring for intentional obfuscation
+ * 
+ * See: https://blog.didierstevens.com/ (PDF obfuscation analysis)
  */
 
 export interface ObfuscationResult {

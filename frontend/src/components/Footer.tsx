@@ -36,8 +36,18 @@ const Footer: React.FC<FooterProps> = ({ onShowDocs }) => {
             </a>
           </div>
           
-          <div className="text-xs text-gray-400">
-            © 2025 PDFRendr
+          <div className="text-xs text-gray-400 text-center sm:text-right">
+            <div>© 2025 PDFRendr</div>
+            <div className="mt-1">
+              Based on <a 
+                href="https://blog.didierstevens.com/programs/pdf-tools/" 
+                target="_blank" 
+                rel="noopener noreferrer"
+                className="text-gray-500 hover:text-blue-600 transition-colors"
+              >
+                Didier Stevens' methods
+              </a>
+            </div>
           </div>
         </div>
       </div>

@@ -1,5 +1,7 @@
 # PDFRendr Technical Overview
 
+*Implementation based on Didier Stevens' PDF malware analysis methodologies*
+
 ## Architecture
 
 PDFRendr converts PDF pages to images and rebuilds clean PDFs:
@@ -37,7 +39,7 @@ This preserves visual content while eliminating dynamic elements.
 
 ## Detection System
 
-PDFRendr identifies 17 types of dynamic objects:
+PDFRendr identifies 17 types of dynamic objects using Didier Stevens' proven detection patterns:
 
 **Code Execution**
 - `/JavaScript`, `/JS` - JavaScript code
@@ -104,3 +106,22 @@ const results = await Promise.all(
 - **PDF.js** - PDF parsing and rendering
 - **PDF-lib** - PDF document creation  
 - **node-canvas** - Node.js image support (optional)
+
+## Research Foundation
+
+PDFRendr builds upon established PDF analysis research:
+
+**Didier Stevens' Methodologies**
+- **PDFiD**: Triage methodology for rapid PDF threat assessment
+- **pdf-parser**: Deep structural analysis and object extraction
+- **Obfuscation Detection**: Hex-encoded name detection (`/J#61vaScript` → `/JavaScript`)
+- **False Positive Prevention**: Proper PDF syntax validation vs. simple string matching
+- **Risk Scoring**: Suspicious pattern combinations (JavaScript + AutoAction = critical)
+
+**Key Research Papers & Tools**
+- [PDF Tools Suite](https://blog.didierstevens.com/programs/pdf-tools/) - Foundation for detection patterns
+- [Analyzing Malicious PDF Files](https://blog.didierstevens.com/2008/10/20/analyzing-a-malicious-pdf-file/) - Core analysis methodology
+- [PDFiD False Positives](https://blog.didierstevens.com/) - Pattern refinement techniques
+
+**Modern Threat Intelligence**
+- [Intezer PDF Analysis](https://www.intezer.com/blog/malware-analysis/analyzing-malicious-pdf-files/) - Contemporary threat vectors

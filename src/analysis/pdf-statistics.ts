@@ -1,6 +1,11 @@
 /**
  * PDF Statistics and Structure Analysis
  * Based on Didier Stevens' PDFiD methodology
+ * 
+ * Reference: https://blog.didierstevens.com/programs/pdf-tools/
+ * - PDFiD tool for PDF triage and risk assessment
+ * - Statistical analysis for malware detection
+ * - False positive prevention techniques
  */
 
 export interface PDFStatistics {

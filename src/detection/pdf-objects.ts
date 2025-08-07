@@ -1,5 +1,13 @@
 /**
- * Simplified PDF Object Detection Module
+ * PDF Object Detection Module
+ * Based on Didier Stevens' PDF analysis research
+ * 
+ * Detection patterns derived from Stevens' PDF tools:
+ * - Proper PDF syntax validation to prevent false positives
+ * - Comprehensive threat pattern library from PDFiD methodology
+ * - Hex context extraction for forensic analysis
+ * 
+ * Reference: https://blog.didierstevens.com/programs/pdf-tools/
  */
 
 interface DetectionResult {

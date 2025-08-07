@@ -4,6 +4,8 @@
 
 Remove dynamic content from PDFs while preserving visual appearance.
 
+*Built on proven methodologies from Didier Stevens' PDF malware analysis research.*
+
 ![PDFRendr Logo](assets/logo.png)
 
 PDFRendr converts PDF pages to images and rebuilds them into a clean PDF. This removes JavaScript, forms, embedded files, and other dynamic objects while maintaining the exact visual output.
@@ -79,7 +81,7 @@ const result = await processPDF(pdfBuffer, {
 
 ## What Gets Removed
 
-PDFRendr detects and removes 17 types of dynamic objects:
+PDFRendr detects and removes 17 types of dynamic objects using Didier Stevens' proven detection methodology:
 
 **JavaScript & Actions**
 - JavaScript code (`/JavaScript`, `/JS`)
@@ -102,6 +104,17 @@ Complete examples in the `examples/` directory:
 - **`examples/client.html`** - Drag & drop browser interface
 - **`examples/node-cli.cjs`** - Command line tool
 - **`examples/server.js`** - HTTP API server
+
+## Research & References
+
+PDFRendr implements techniques and methodologies from:
+
+**Didier Stevens** - PDF malware analysis pioneer
+- [PDF Tools](https://blog.didierstevens.com/programs/pdf-tools/) - PDFiD and pdf-parser methodologies
+- [PDF Analysis Research](https://blog.didierstevens.com/) - PDF structure analysis and threat detection
+- Name obfuscation detection and false positive prevention techniques
+
+**Intezer** - [PDF Malware Analysis](https://www.intezer.com/blog/malware-analysis/analyzing-malicious-pdf-files/) - Modern threat analysis
 
 ## License
 
