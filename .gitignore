@@ -47,3 +47,6 @@ pids/
 
 # Built library files that should be generated
 frontend/public/pdfrendr.umd.cjs
+
+# Exception: Include UMD file in examples for standalone usage
+!examples/pdfrendr.umd.cjs
