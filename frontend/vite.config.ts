@@ -3,7 +3,7 @@ import react from '@vitejs/plugin-react';
 
 export default defineConfig({
   plugins: [react()],
-  base: '/pdfrendr/', // GitHub Pages project path
+  base: '/', // GitHub Pages user/org site at root
   build: {
     outDir: '../dist-github',
     emptyOutDir: true,
