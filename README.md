@@ -124,20 +124,6 @@ PDFRendr employs comprehensive detection across 17 distinct patterns:
 - **CFF fonts** (`/CFF`) - Compact Font Format structures  
 - **TrueType fonts** (`/TrueType`) - TrueType font embedding
 
-## 🛡️ Security Considerations
-
-**This library processes PDFs during parsing and should be considered:**
-
-- ✅ Helpful for reducing certain types of dynamic content
-- ⚠️ **Not a complete security solution** - PDF.js still parses the original file
-- ⚠️ **Cannot prevent all PDF vulnerabilities** - Zero-day exploits may still work
-- ⚠️ **Processing happens during analysis** - Malicious PDFs are still parsed
-
-**Recommended practices:**
-- Use in combination with other security measures
-- Process files in isolated environments when possible
-- Keep PDF.js dependencies updated
-- Monitor for unusual processing failures
 
 ## 📚 Examples
 
