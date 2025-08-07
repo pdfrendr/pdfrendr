@@ -2,175 +2,112 @@
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-**Convert PDFs to images and rebuild them as clean PDFs**
+Remove dynamic content from PDFs while preserving visual appearance.
 
 ![PDFRendr Logo](assets/logo.png)
 
-PDFRendr processes PDFs by converting each page to an image and rebuilding the document. This approach removes dynamic objects (JavaScript, forms, embedded files) while preserving the visual appearance exactly as you see it.
+PDFRendr converts PDF pages to images and rebuilds them into a clean PDF. This removes JavaScript, forms, embedded files, and other dynamic objects while maintaining the exact visual output.
 
-## ✨ Features
+**Key Benefits:**
+- Eliminates 17 types of dynamic objects
+- Preserves visual appearance exactly  
+- Works in browser and Node.js
+- Processes files locally (no uploads)
 
-- 🔒 **Privacy First** - All processing happens locally
-- 🛡️ **Dynamic Object Removal** - Eliminates JavaScript, forms, embedded files
-- 📄 **Visual Preservation** - Maintains exact visual appearance
-- ⚡ **Fast Processing** - Efficient browser-based rendering
-- 🌐 **Cross-platform** - Works in browser and Node.js
-
-## 🚀 Quick Start
-
-### Installation
+## Installation
 
 ```bash
 npm install pdfrendr
 ```
 
-### Node.js Usage
+## Usage
+
+### Node.js
 
 ```javascript
-import { sanitizePDF } from 'pdfrendr';
+import { processPDF } from 'pdfrendr';
+import fs from 'fs';
 
-const fs = require('fs');
 const inputPdf = fs.readFileSync('input.pdf');
+const result = await processPDF(inputPdf.buffer);
 
-const result = await sanitizePDF(inputPdf.buffer, {
-  renderQuality: 2.0,  // 1.0-4.0
-  compressionLevel: 2  // 0-3
-});
-
-if (result.processedPdf) {
-  fs.writeFileSync('output.pdf', result.processedPdf);
-  console.log(`Processed ${result.removedObjects.length} dynamic objects`);
-}
+fs.writeFileSync('output.pdf', result.processedPdf);
+console.log(`Removed ${result.removedObjects.length} dynamic objects`);
 ```
 
-### Browser Usage
+### Browser
 
 ```html
-<!-- Include the UMD bundle -->
 <script src="pdfrendr.umd.cjs"></script>
 <script>
   const { PDFRenderer } = PDFRendr;
   
-  const renderer = new PDFRenderer({
-    renderQuality: 2.0
-  });
-
-  const result = await renderer.render(pdfArrayBuffer);
-
-  if (result.processedPdf) {
-    // Download processed PDF
-    const blob = new Blob([result.processedPdf], { type: 'application/pdf' });
-    const url = URL.createObjectURL(blob);
-    // ... download logic
-  }
+  // Process PDF file
+  const result = await new PDFRenderer().render(pdfArrayBuffer);
+  
+  // Download cleaned PDF
+  const blob = new Blob([result.processedPdf], { type: 'application/pdf' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = 'cleaned.pdf';
+  a.click();
 </script>
 ```
 
-## ⚙️ Configuration
+## Configuration
 
-### Options
+```javascript
+const result = await processPDF(pdfBuffer, {
+  renderQuality: 2.0,      // Image quality: 1.0-4.0 (higher = better quality)
+  compressionLevel: 2,     // Compression: 0-3 (higher = smaller file)
+  timeoutMs: 30000        // Timeout in milliseconds
+});
+```
 
-| Option | Type | Default | Description |
-|--------|------|---------|-------------|
-| `renderQuality` | number | 2.0 | Rendering quality multiplier (1.0-4.0) |
-| `compressionLevel` | number | 2 | PDF compression level (0-3, higher = more compression) |
-| `timeoutMs` | number | 30000 | Processing timeout in milliseconds |
-
-### Result Object
+### Response
 
 ```javascript
 {
-  processedPdf: ArrayBuffer,           // The processed PDF data
-  removedObjects: DetectionResult[],   // Array of detected dynamic objects with details
-  originalSize: number,                // Original file size in bytes  
-  processedSize: number,               // Processed file size in bytes
-  processingTimeMs: number             // Processing time in milliseconds
-}
-
-// DetectionResult structure:
-{
-  name: string,        // Human-readable object type (e.g., "JavaScript actions (/JavaScript)")
-  hexSnippet: string   // Hex dump with context around the detected pattern
+  processedPdf: ArrayBuffer,        // Clean PDF data
+  removedObjects: Array,            // Detected dynamic objects
+  originalSize: number,             // Original file size  
+  processedSize: number,            // New file size
+  processingTimeMs: number          // Processing time
 }
 ```
 
-## 🔍 How It Works
+## What Gets Removed
 
-1. **Parse PDF** - Uses PDF.js to parse the original document
-2. **Convert to Images** - Renders each page as a high-quality image
-3. **Rebuild PDF** - Creates a new PDF using only the image content
-4. **Remove Dynamic Objects** - JavaScript, forms, and embedded content are excluded
+PDFRendr detects and removes 17 types of dynamic objects:
 
-This approach ensures maximum compatibility while removing potentially dangerous dynamic content.
+**JavaScript & Actions**
+- JavaScript code (`/JavaScript`, `/JS`)
+- Form submissions (`/SubmitForm`) 
+- External links (`/URI`)
+- Navigation actions (`/GoTo`, `/Launch`, `/Named`)
 
-## 🚨 Dynamic Objects Detected
+**Files & Media**
+- Embedded files (`/EmbeddedFile`, `/Filespec`)
+- Rich media content (`/RichMedia`, `/Sound`, `/Movie`)
 
-PDFRendr employs comprehensive detection across 17 distinct patterns:
+**Interactive Features**
+- Form fields and triggers (`/AA`, `/A`, `/XFA`)
+- Digital signatures (`/Sig`, `/ByteRange`)
+- Custom fonts (`/Type1`, `/CFF`, `/TrueType`)
 
-### JavaScript Threats
-- **JavaScript actions** (`/JavaScript`) - Full JavaScript execution contexts
-- **JavaScript objects** (`/JS`) - Short-form JavaScript object declarations
+## Examples
 
-### Navigation & Actions  
-- **Form submission actions** (`/SubmitForm`) - Data exfiltration attempts
-- **External links** (`/URI`) - Malicious redirect vectors
-- **GoTo actions** (`/GoTo`) - Document navigation manipulation
-- **Launch actions** (`/Launch`) - External program execution
-- **Named actions** (`/Named`) - Predefined dangerous operations
+Complete examples in the `examples/` directory:
+- **`examples/client.html`** - Drag & drop browser interface
+- **`examples/node-cli.cjs`** - Command line tool
+- **`examples/server.js`** - HTTP API server
 
-### File & Media Embedding
-- **Embedded files** (`/EmbeddedFile`) - Hidden file attachments
-- **File specifications** (`/Filespec`) - File reference frameworks
-- **Rich media** (`/RichMedia`) - Flash/multimedia exploit vectors
-- **Sound objects** (`/Sound`) - Audio file containers
-- **Movie objects** (`/Movie`) - Video file containers
+## License
 
-### Interactive Elements
-- **Additional actions** (`/AA`) - Automatic trigger mechanisms
-- **Action objects** (`/A`) - General action object frameworks
-- **XFA forms** (`/XFA`) - XML-based dynamic form structures
+MIT License - see [LICENSE](LICENSE) file.
 
-### Signatures & Fonts
-- **Digital signatures** (`/Sig`) - Signature object containers
-- **Signature fields** (`/ByteRange`) - Signature validation metadata
-- **Type1 fonts** (`/Type1`) - PostScript font embedding
-- **CFF fonts** (`/CFF`) - Compact Font Format structures  
-- **TrueType fonts** (`/TrueType`) - TrueType font embedding
+---
 
-
-## 📚 Examples
-
-See the `examples/` directory for complete implementations:
-
-- **Node.js CLI** - Command-line PDF processing
-- **Express Server** - HTTP API for PDF processing  
-- **Browser Client** - Client-side PDF processing
-
-## 🔧 Development
-
-```bash
-# Install dependencies
-npm install
-
-# Build for Node.js
-npm run build
-
-# Build for browser
-npm run build:browser
-
-# Build demo
-npm run build:demo
-
-# Run tests
-npm test
-```
-
-## 📄 License
-
-MIT License - see LICENSE file for details.
-
-## 🙏 Acknowledgments
-
-- [PDF.js](https://mozilla.github.io/pdf.js/) - PDF parsing library
-- [PDF-lib](https://pdf-lib.js.org/) - PDF generation library
-- [Intezer](https://intezer.com/blog/malware-analysis/malicious-pdf-analysis-ebook/) - PDF malware analysis insights
+**Demo:** https://pdfrendr.github.io  
+**Built with:** [PDF.js](https://mozilla.github.io/pdf.js/) and [PDF-lib](https://pdf-lib.js.org/)
