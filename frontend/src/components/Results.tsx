@@ -187,15 +187,6 @@ const Results: React.FC<ResultsProps> = ({ result, fileName, onReset }) => {
             <h3 className="text-sm font-semibold text-gray-900 flex items-center gap-2">
               <Shield size={16} />
               PDF Structure Analysis
-              <a 
-                href="https://blog.didierstevens.com/programs/pdf-tools/" 
-                target="_blank" 
-                rel="noopener noreferrer"
-                className="text-xs bg-blue-100 text-blue-800 px-2 py-1 rounded font-mono hover:bg-blue-200 transition-colors"
-                title="Based on Didier Stevens' PDF analysis methodology - Click to learn more"
-              >
-                Didier Stevens Method
-              </a>
             </h3>
           </div>
           <div className="p-4 space-y-4">
