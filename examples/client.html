@@ -189,10 +189,131 @@
     <div class="result" id="result"></div>
   </div>
   
-  <!-- Include the PDF processing library -->
-  <script src="../dist-github/pdfrendr.umd.cjs"></script>
+  <!-- Include PDF.js from CDN -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf-lib/1.17.1/pdf-lib.min.js"></script>
+  
+  <!-- Include the PDF processing library directly -->
   <script type="module">
-    const { PDFRenderer } = PDFRendr;
+    // Minimal inline PDFRenderer implementation
+    class PDFRenderer {
+      constructor(options = {}) {
+        this.options = {
+          renderQuality: 2.0,
+          compressionLevel: 2,
+          timeoutMs: 30000,
+          ...options
+        };
+        
+        // Configure PDF.js worker
+        if (typeof pdfjsLib !== 'undefined') {
+          pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+        }
+      }
+      
+      async render(pdfArrayBuffer) {
+        const startTime = performance.now();
+        const originalSize = pdfArrayBuffer.byteLength;
+        
+        try {
+          // Load PDF with PDF.js
+          const pdfDoc = await pdfjsLib.getDocument({
+            data: new Uint8Array(pdfArrayBuffer),
+            disableFontFace: true,
+            disableStream: true
+          }).promise;
+          
+          // Create new PDF with PDF-lib
+          const newPdf = await PDFLib.PDFDocument.create();
+          const numPages = pdfDoc.numPages;
+          
+          // Process each page
+          for (let pageNum = 1; pageNum <= numPages; pageNum++) {
+            const page = await pdfDoc.getPage(pageNum);
+            const viewport = page.getViewport({ scale: this.options.renderQuality });
+            
+            // Create canvas
+            const canvas = document.createElement('canvas');
+            const context = canvas.getContext('2d');
+            canvas.height = viewport.height;
+            canvas.width = viewport.width;
+            
+            // Render page to canvas
+            await page.render({
+              canvasContext: context,
+              viewport: viewport
+            }).promise;
+            
+            // Convert canvas to image bytes
+            const imageDataUrl = canvas.toDataURL('image/png');
+            const imageBytes = this.dataURLToBytes(imageDataUrl);
+            
+            // Embed image in new PDF
+            const pngImage = await newPdf.embedPng(imageBytes);
+            const pdfPage = newPdf.addPage([viewport.width, viewport.height]);
+            pdfPage.drawImage(pngImage, {
+              x: 0,
+              y: 0,
+              width: viewport.width,
+              height: viewport.height,
+            });
+          }
+          
+          // Save the new PDF
+          const processedPdfBytes = await newPdf.save();
+          const processedSize = processedPdfBytes.byteLength;
+          const processingTime = performance.now() - startTime;
+          
+          // Detect dynamic objects (simplified)
+          const removedObjects = this.detectDynamicObjects(pdfArrayBuffer);
+          
+          return {
+            processedPdf: processedPdfBytes.buffer,
+            originalSize,
+            processedSize,
+            processingTimeMs: Math.round(processingTime),
+            removedObjects
+          };
+          
+        } catch (error) {
+          throw new Error(`PDF processing failed: ${error.message}`);
+        }
+      }
+      
+      dataURLToBytes(dataURL) {
+        const base64 = dataURL.split(',')[1];
+        const binary = atob(base64);
+        const bytes = new Uint8Array(binary.length);
+        for (let i = 0; i < binary.length; i++) {
+          bytes[i] = binary.charCodeAt(i);
+        }
+        return bytes;
+      }
+      
+      detectDynamicObjects(pdfBuffer) {
+        const pdfText = new TextDecoder().decode(pdfBuffer);
+        const detected = [];
+        
+        // Basic detection patterns
+        const patterns = [
+          { name: 'JavaScript actions (/JavaScript)', pattern: '/JavaScript' },
+          { name: 'JavaScript objects (/JS)', pattern: '/JS' },
+          { name: 'Form submission actions (/SubmitForm)', pattern: '/SubmitForm' },
+          { name: 'External links (/URI)', pattern: '/URI' },
+          { name: 'Embedded files (/EmbeddedFile)', pattern: '/EmbeddedFile' },
+          { name: 'XFA forms (/XFA)', pattern: '/XFA' },
+          { name: 'Digital signatures (/Sig)', pattern: '/Sig' }
+        ];
+        
+        patterns.forEach(({ name, pattern }) => {
+          if (pdfText.includes(pattern)) {
+            detected.push({ name });
+          }
+        });
+        
+        return detected;
+      }
+    }
     
     let processedPdfData = null;
     
