@@ -91,25 +91,20 @@ const FileUpload: React.FC<FileUploadProps> = ({ onFileSelect }) => {
           <h3 className="font-semibold text-gray-900">Processing Options</h3>
         </div>
         
-        <div className="space-y-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
-            <label className="flex items-center justify-between mb-2">
-              <div className="flex items-center gap-2">
-                <span className="text-sm font-medium text-gray-700">
-                  Render Quality
-                </span>
-                <div className="group relative">
-                  <Info className="h-4 w-4 text-gray-400 cursor-help" />
-                  <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-3 py-2 bg-gray-900 text-white text-xs rounded-lg opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none whitespace-nowrap z-10">
-                    Image resolution when converting PDF pages<br/>
-                    Higher = better quality but slower processing
-                  </div>
+            <div className="flex items-center gap-1 mb-1">
+              <span className="text-xs font-medium text-gray-700">Quality</span>
+              <div className="group relative">
+                <Info className="h-3 w-3 text-gray-400 cursor-help" />
+                <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-2 py-1 bg-gray-900 text-white text-xs rounded opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none whitespace-nowrap z-10">
+                  Image resolution: Higher = better quality
                 </div>
               </div>
-              <span className="text-sm text-blue-600 font-mono">
+              <span className="text-xs text-blue-600 font-mono ml-auto">
                 {renderQuality.toFixed(1)}x
               </span>
-            </label>
+            </div>
             <input
               type="range"
               min="0.5"
@@ -117,32 +112,23 @@ const FileUpload: React.FC<FileUploadProps> = ({ onFileSelect }) => {
               step="0.1"
               value={renderQuality}
               onChange={(e) => setRenderQuality(parseFloat(e.target.value))}
-              className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer slider"
+              className="w-full h-1.5 bg-gray-200 rounded-lg appearance-none cursor-pointer slider"
             />
-            <div className="flex justify-between text-xs text-gray-500 mt-1">
-              <span>Fast</span>
-              <span>High Quality</span>
-            </div>
           </div>
 
           <div>
-            <label className="flex items-center justify-between mb-2">
-              <div className="flex items-center gap-2">
-                <span className="text-sm font-medium text-gray-700">
-                  Compression Level
-                </span>
-                <div className="group relative">
-                  <Info className="h-4 w-4 text-gray-400 cursor-help" />
-                  <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-3 py-2 bg-gray-900 text-white text-xs rounded-lg opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none whitespace-nowrap z-10">
-                    Output PDF compression level<br/>
-                    Higher = smaller file size but more processing
-                  </div>
+            <div className="flex items-center gap-1 mb-1">
+              <span className="text-xs font-medium text-gray-700">Compression</span>
+              <div className="group relative">
+                <Info className="h-3 w-3 text-gray-400 cursor-help" />
+                <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-2 py-1 bg-gray-900 text-white text-xs rounded opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none whitespace-nowrap z-10">
+                  File compression: Higher = smaller size
                 </div>
               </div>
-              <span className="text-sm text-blue-600 font-mono">
-                Level {compressionLevel}
+              <span className="text-xs text-blue-600 font-mono ml-auto">
+                L{compressionLevel}
               </span>
-            </label>
+            </div>
             <input
               type="range"
               min="0"
@@ -150,12 +136,8 @@ const FileUpload: React.FC<FileUploadProps> = ({ onFileSelect }) => {
               step="1"
               value={compressionLevel}
               onChange={(e) => setCompressionLevel(parseInt(e.target.value))}
-              className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer slider"
+              className="w-full h-1.5 bg-gray-200 rounded-lg appearance-none cursor-pointer slider"
             />
-            <div className="flex justify-between text-xs text-gray-500 mt-1">
-              <span>Larger File</span>
-              <span>Smaller File</span>
-            </div>
           </div>
         </div>
       </div>
