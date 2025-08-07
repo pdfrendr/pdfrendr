@@ -36,7 +36,7 @@ function App() {
   // Load PDFRendr library
   useEffect(() => {
     const script = document.createElement('script');
-    script.src = '/pdfrendr.umd.cjs';
+    script.src = './pdfrendr.umd.cjs';
     script.onload = () => {
       console.log('PDFRendr library loaded');
       setLibraryLoaded(true);
@@ -100,7 +100,7 @@ function App() {
       {/* GitHub Link */}
       <div className="fixed top-4 right-4 z-40">
         <a
-          href="https://github.com/pdfrendr/pdfrendr"
+          href="https://github.com/pdfrendr/pdfrendr.github.io"
           target="_blank"
           rel="noopener noreferrer"
           className="inline-flex items-center gap-2 px-4 py-2 bg-gray-900 text-white rounded-full text-sm font-medium hover:bg-gray-800 transition-colors shadow-lg"
