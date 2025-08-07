@@ -48,6 +48,7 @@ export interface ProcessingResult {
 
 export interface ProcessingOptions {
   renderQuality: number;
+  compressionLevel: number;
 }
 
 function App() {

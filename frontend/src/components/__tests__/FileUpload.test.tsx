@@ -106,7 +106,8 @@ describe('FileUpload', () => {
     
     expect(mockOnOptionsChange).toHaveBeenCalledWith({
       ...mockOptions,
-      renderQuality: 3.0
+      renderQuality: 3.0,
+      compressionLevel: 2
     });
   });
 
