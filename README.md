@@ -45,21 +45,25 @@ if (result.processedPdf) {
 
 ### Browser Usage
 
-```javascript
-import { PDFRenderer } from 'pdfrendr/browser';
+```html
+<!-- Include the UMD bundle -->
+<script src="pdfrendr.umd.cjs"></script>
+<script>
+  const { PDFRenderer } = PDFRendr;
+  
+  const renderer = new PDFRenderer({
+    renderQuality: 2.0
+  });
 
-const renderer = new PDFRenderer({
-  renderQuality: 2.0
-});
+  const result = await renderer.render(pdfArrayBuffer);
 
-const result = await renderer.render(pdfArrayBuffer);
-
-if (result.processedPdf) {
-  // Download processed PDF
-  const blob = new Blob([result.processedPdf], { type: 'application/pdf' });
-  const url = URL.createObjectURL(blob);
-  // ... download logic
-}
+  if (result.processedPdf) {
+    // Download processed PDF
+    const blob = new Blob([result.processedPdf], { type: 'application/pdf' });
+    const url = URL.createObjectURL(blob);
+    // ... download logic
+  }
+</script>
 ```
 
 ## ⚙️ Configuration

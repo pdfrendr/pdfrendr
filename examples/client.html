@@ -190,8 +190,9 @@
   </div>
   
   <!-- Include the PDF processing library -->
+  <script src="../dist-github/pdfrendr.umd.cjs"></script>
   <script type="module">
-    import { PDFRenderer } from '../dist/browser/index.esm.js';
+    const { PDFRenderer } = PDFRendr;
     
     let processedPdfData = null;
     
