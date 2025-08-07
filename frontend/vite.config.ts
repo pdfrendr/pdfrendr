@@ -3,7 +3,7 @@ import react from '@vitejs/plugin-react';
 
 export default defineConfig({
   plugins: [react()],
-  base: '/', // GitHub Pages user/org site at root
+  base: './', // Use relative paths for GitHub Pages
   build: {
     outDir: '../dist-github',
     emptyOutDir: true,
